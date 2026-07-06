@@ -91,7 +91,7 @@ local function dragToObject(fromObj, toObj)
 		VirtualInputManager:SendMouseButtonEvent(fromX, fromY, 0, true, game, 0)
 		task.wait(0.1)
 		
-		local steps = 3
+		local steps = 2
 		for i = 1, steps do
 			local t = i / steps
 			local currentX = fromX + (toX - fromX) * t
