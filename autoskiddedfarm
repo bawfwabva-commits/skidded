@@ -77,19 +77,40 @@ local function clickObjectHold(obj, duration)
 	end)
 end
 
+local function isVisible(scrollingFrame, item)
+    local relY = item.AbsolutePosition.Y - scrollingFrame.AbsolutePosition.Y
+    -- Проверяем, находится ли объект внутри границ скролл-фрейма
+    return relY >= 0 and (relY + item.AbsoluteSize.Y) <= scrollingFrame.AbsoluteSize.Y
+end
+
 local function dragToObject(fromObj, toObj)
 	if not fromObj or not toObj or not fromObj:IsA("GuiObject") or not toObj:IsA("GuiObject") then return end
 	
-	local fromX = fromObj.AbsolutePosition.X + fromObj.AbsoluteSize.X / 2
-	local fromY = fromObj.AbsolutePosition.Y + fromObj.AbsoluteSize.Y / 2 + CLICK_OFFSET_Y
-	local toX = toObj.AbsolutePosition.X + toObj.AbsoluteSize.X / 2
-	local toY = toObj.AbsolutePosition.Y + toObj.AbsoluteSize.Y / 2 + CLICK_OFFSET_Y
-	
 	pcall(function()
+
+	    local scroll = fromObj:FindFirstAncestorWhichIsA("ScrollingFrame")
+        if not isVisible(scroll, fromObj) then
+	       task.wait(0.2)
+           scroll.CanvasPosition = Vector2.new(0, fromObj.AbsolutePosition.Y - scroll.AbsolutePosition.Y)
+           task.wait(0.2) -- Ждем дольше, чтобы UI отрисовался
+        end
+
+		local fromX = fromObj.AbsolutePosition.X + fromObj.AbsoluteSize.X / 2
+        local fromY = fromObj.AbsolutePosition.Y + fromObj.AbsoluteSize.Y / 2 + CLICK_OFFSET_Y
+
 		VirtualInputManager:SendMouseMoveEvent(fromX, fromY, game, 0)
 		task.wait(0.05)
 		VirtualInputManager:SendMouseButtonEvent(fromX, fromY, 0, true, game, 0)
 		task.wait(0.1)
+
+		if not isVisible(scroll, toObj) then
+	       task.wait(0.2)
+           scroll.CanvasPosition = Vector2.new(0, toObj.AbsolutePosition.Y - scroll.AbsolutePosition.Y)
+           task.wait(0.2)
+        end
+
+		local toX = toObj.AbsolutePosition.X + toObj.AbsoluteSize.X / 2
+	    local toY = toObj.AbsolutePosition.Y + toObj.AbsoluteSize.Y / 2 + CLICK_OFFSET_Y
 		
 		local steps = 2
 		for i = 1, steps do
