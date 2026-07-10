@@ -147,23 +147,14 @@ local function clickCenter()
 end
 
 local function stackCash()
-    print("[DEBUG] Начинаем стакание денег (упрощенная сквозная логика)")
     
     local ui = PlayerGui:FindFirstChild("UI")
-    if not ui then return print("[DEBUG] UI не найден") end
-    
     local hud = ui:FindFirstChild("HUD")
-    if not hud then return print("[DEBUG] HUD не найден") end
     
-    local backpack = hud:FindFirstChild("backpackFrame")
-    if not backpack then return print("[DEBUG] backpackFrame не найден") end
-    
+    local backpack = hud:FindFirstChild("backpackFrame")    
     local loot = backpack:FindFirstChild("loot")
-    if not loot then return print("[DEBUG] loot не найден") end
-
     local inventoryFrame = loot:WaitForChild("inventoryFrame", 5)
     local itemsContainer = inventoryFrame and inventoryFrame:WaitForChild("items", 5)
-    if not itemsContainer then return print("[DEBUG] Контейнер items не найден") end
 
     while true do
         local incompleteCash = {}
@@ -182,10 +173,9 @@ local function stackCash()
             end
         end
         
-        print("[DEBUG] Найдено неполных пачек: " .. #incompleteCash)
+        print("money: " .. #incompleteCash)
         
         if #incompleteCash < 2 then
-            print("[DEBUG] Неполных пачек меньше двух. Стакание завершено.")
             break
         end
         
@@ -193,7 +183,6 @@ local function stackCash()
         local sourceFrame = incompleteCash[2]
         
         if targetFrame and targetFrame.Parent and sourceFrame and sourceFrame.Parent then
-            print("[DEBUG] Перетаскиваем неполную пачку во вторую для объединения...")
             
             local buttonSource = sourceFrame:FindFirstChild("button") or sourceFrame
             local buttonTarget = targetFrame:FindFirstChild("button") or targetFrame
@@ -206,73 +195,40 @@ local function stackCash()
         end
     end
     
-    print("[DEBUG] Стакание денег полностью завершено")
 end
 
 local function sellAll()
-	print("[DEBUG] Начинаем продажу")
 	local ui = PlayerGui:FindFirstChild("UI")
 	if not ui then 
-		print("[DEBUG] UI не найден")
 		return 
 	end
-	print("[DEBUG] UI найден")
 	
 	local inventoryCategory = ui:FindFirstChild("inventoryCategory")
 	if inventoryCategory then
-		print("[DEBUG] inventoryCategory найден")
 		local overall = inventoryCategory:FindFirstChild("overall")
 		if overall then
-			print("[DEBUG] overall найден, кликаем")
 			clickObject(overall)
 			task.wait(0.25)
-		else
-			print("[DEBUG] overall не найден")
 		end
-	else
-		print("[DEBUG] inventoryCategory не найден")
 	end
 	
 	local hud = ui:FindFirstChild("HUD")
 	if not hud then 
-		print("[DEBUG] HUD не найден")
 		return 
 	end
-	print("[DEBUG] HUD найден")
 	
 	local backpack = hud:FindFirstChild("backpackFrame")
-	if not backpack then 
-		print("[DEBUG] backpackFrame не найден")
-		return 
-	end
-	print("[DEBUG] backpackFrame найден")
 	
 	local trader = backpack:FindFirstChild("traderCenterFrame") or backpack:FindFirstChild("trader")
-	if not trader then 
-		print("[DEBUG] trader не найден")
-		return 
-	end
-	print("[DEBUG] trader найден")
 	
 	local tradesellswitch = trader:FindFirstChild("traderSellButton")
 	local realsellbutton = trader:FindFirstChild("dealButtonFrame") and trader.dealButtonFrame:FindFirstChild("dealButton")
-	
-	if not tradesellswitch or not realsellbutton then 
-		print("[DEBUG] tradesellswitch или realsellbutton не найден")
-		return 
-	end
-	print("[DEBUG] tradesellswitch и realsellbutton найдены")
+
 	
 	task.wait(0.25)
 	clickObject(tradesellswitch)
-	print("[DEBUG] Нажали на traderSellButton")
 	
 	local playerContainer = backpack:FindFirstChild("player")
-	if not playerContainer then 
-		print("[DEBUG] playerContainer не найден")
-		return 
-	end
-	print("[DEBUG] playerContainer найден")
 	
 	local pocket = nil
     local DuffelBag = nil
@@ -281,7 +237,6 @@ local function sellAll()
 	for _, child in ipairs(playerContainer:GetChildren()) do
 		if child:IsA("Frame") and child.Name == "inventoryFrame" and child:GetAttribute("childrens") == 8 then
 			pocket = child
-			print("[DEBUG] Найден pocket")
 			break
 		end
 	end
@@ -289,7 +244,6 @@ local function sellAll()
     for _, child in ipairs(playerContainer:GetChildren()) do
 		if child:IsA("Frame") and child.Name == "inventoryFrame" and child:GetAttribute("childrens") == 9 then
 			DuffelBag = child
-			print("[DEBUG] Найден DuffelBag")
 			break
 		end
 	end
@@ -297,18 +251,11 @@ local function sellAll()
     for _, child in ipairs(playerContainer:GetChildren()) do
 		if child:IsA("Frame") and child.Name == "inventoryFrame" and child:GetAttribute("childrens") == 4 then
 			Vest = child
-			print("[DEBUG] Найден Vest")
 			break
 		end
 	end
-
-	if not pocket then 
-		print("[DEBUG] pocket не найден")
-		return 
-	end
 	
 	local itemsContainer = pocket:FindFirstChild("items") or pocket
-	print("[DEBUG] Продаем предметы из pocket")
 	for _, itemFrame in ipairs(itemsContainer:GetChildren()) do
 		if itemFrame:IsA("Frame") then
 			local button = itemFrame:FindFirstChild("button")
@@ -321,7 +268,6 @@ local function sellAll()
 
 	if DuffelBag then
 		local itemsContainerDuffelBag = DuffelBag:FindFirstChild("items") or DuffelBag
-		print("[DEBUG] Продаем предметы из DuffelBag")
 		for _, itemFrame in ipairs(itemsContainerDuffelBag:GetChildren()) do
 			if itemFrame:IsA("Frame") then
 				local button = itemFrame:FindFirstChild("button")
@@ -335,7 +281,6 @@ local function sellAll()
 
 	if Vest then
 		local itemsContainerVest = Vest:FindFirstChild("items") or Vest
-		print("[DEBUG] Продаем предметы из Vest")
 		for _, itemFrame in ipairs(itemsContainerVest:GetChildren()) do
 			if itemFrame:IsA("Frame") then
 				local button = itemFrame:FindFirstChild("button")
@@ -348,18 +293,14 @@ local function sellAll()
 	end
 
     clickObject(realsellbutton)
-	print("[DEBUG] Нажали sell button")
 	task.wait(0.5)
 
 	local status = backpack:FindFirstChild("status")
 	if status then
-		print("[DEBUG] Найден status")
 		local overall = status:FindFirstChild("overallFrame")
 		if overall then
-			print("[DEBUG] Найден overallFrame")
 			local equipSlots = overall:FindFirstChild("equipment") and overall.equipment:FindFirstChild("slots")
 			if equipSlots then
-				print("[DEBUG] Продаем экипировку")
 				for _, slot in ipairs(equipSlots:GetChildren()) do
 					if slot:IsA("Frame") and slot:FindFirstChildOfClass("ObjectValue") then
 						local button = slot:FindFirstChild("button")
@@ -370,7 +311,6 @@ local function sellAll()
 			end
 			local weaponSlots = overall:FindFirstChild("weapons") and overall.weapons:FindFirstChild("slots")
 			if weaponSlots then
-				print("[DEBUG] Продаем оружие")
 				for _, slot in ipairs(weaponSlots:GetChildren()) do
 					if slot:IsA("Frame") and slot:FindFirstChildOfClass("ObjectValue") then
 						local button = slot:FindFirstChild("button")
@@ -383,31 +323,18 @@ local function sellAll()
 	end
 	
 	clickObject(realsellbutton)
-	print("[DEBUG] Нажали sell button второй раз")
 	task.wait(0.5)
-	
-	-- Теперь открываем stash и стакаем деньги
-	print("[DEBUG] Открываем stash для стакания денег")
+
 	local lobbyBottom = PlayerGui:FindFirstChild("UI") and PlayerGui.UI:FindFirstChild("mainMenuFrame") and PlayerGui.UI.mainMenuFrame:FindFirstChild("lobbyBottom")
 	if lobbyBottom then
 		local stash = lobbyBottom:FindFirstChild("main") and lobbyBottom.main:FindFirstChild("stash")
 		if stash then
-			print("[DEBUG] Stash найден, открываем")
 			clickObject(stash)
 			task.wait(0.5)
-			
-			-- Стакаем деньги в stash
-			print("[DEBUG] Запускаем стакание денег в stash")
+
 			stackCash()
-			print("[DEBUG] Стакание денег в stash завершено")
-		else
-			print("[DEBUG] Stash НЕ найден в lobbyBottom.main")
 		end
-	else
-		print("[DEBUG] lobbyBottom не найден")
 	end
-	
-	print("[DEBUG] Продажа завершена")
 end
 
 local function checkPrompt()
@@ -427,20 +354,17 @@ local function checkPrompt()
 end
 
 local function waitForMainMenu()
-	print("[DEBUG] Ожидаем главное меню")
 	while true do
 		clickCenter()
 		task.wait(0.1)
 		local lobbyBottom = PlayerGui:FindFirstChild("UI") and PlayerGui.UI:FindFirstChild("mainMenuFrame") and PlayerGui.UI.mainMenuFrame:FindFirstChild("lobbyBottom")
 		if lobbyBottom and lobbyBottom.Visible then
-			print("[DEBUG] Главное меню найдено")
 			return lobbyBottom
 		end
 	end
 end
 
 while true do
-	print("[DEBUG] === НАЧАЛО НОВОГО ЦИКЛА ===")
 	local lobbyBottom = waitForMainMenu()
 	
 	for _ = 1, 5 do
@@ -448,57 +372,38 @@ while true do
 		task.wait(0.1)
 	end
 	
-	print("[DEBUG] Ищем traders")
 	local traders = lobbyBottom:FindFirstChild("main") and lobbyBottom.main:FindFirstChild("traders")
 	if traders then
-		print("[DEBUG] Traders найден, кликаем")
 		clickObject(traders)
 		task.wait(0.5)
-	else
-		print("[DEBUG] Traders НЕ найден")
 	end
 	
-	print("[DEBUG] Ищем traderList")
 	local traderList = PlayerGui:FindFirstChild("UI") and PlayerGui.UI:FindFirstChild("HUD") and PlayerGui.UI.HUD:FindFirstChild("traderListFrame")
 	if traderList then
-		print("[DEBUG] traderList найден")
 		local contents = traderList:FindFirstChild("contents")
 		if contents then
-			print("[DEBUG] contents найден")
 			local dragov = contents:FindFirstChild("Dragov") or contents:FindFirstChildWhichIsA("TextButton")
 			if dragov then
-				print("[DEBUG] Dragov найден, кликаем")
 				clickObject(dragov)
 				task.wait(0.5)
-			else
-				print("[DEBUG] Dragov НЕ найден")
 			end
-		else
-			print("[DEBUG] contents НЕ найден")
 		end
-	else
-		print("[DEBUG] traderList НЕ найден")
 	end
 	
-	print("[DEBUG] Ожидаем диалог")
 	local dialogueFrame = PlayerGui:FindFirstChild("UI") and PlayerGui.UI:FindFirstChild("temp") and PlayerGui.UI.temp:FindFirstChild("dialogueFrame")
 	while dialogueFrame do
-		print("[DEBUG] Диалог активен, кликаем")
 		clickCenter()
 		task.wait(0.1)
 		local choice1 = dialogueFrame:FindFirstChild("main") and dialogueFrame.main:FindFirstChild("dialogueChoices") and dialogueFrame.main.dialogueChoices:FindFirstChild("1")
 		if choice1 then
-			print("[DEBUG] Найден выбор 1, кликаем")
 			clickObject(choice1)
 			task.wait(0.1)
 		end
 		dialogueFrame = PlayerGui:FindFirstChild("UI") and PlayerGui.UI:FindFirstChild("temp") and PlayerGui.UI.temp:FindFirstChild("dialogueFrame")
 	end
-	print("[DEBUG] Диалог завершен")
 	
 	sellAll()
 	
-	print("[DEBUG] Телепортируемся")
 	TeleportService:Teleport(game.PlaceId)
 	task.wait(5)
 end
