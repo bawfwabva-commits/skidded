@@ -90,9 +90,9 @@ local function dragToObject(fromObj, toObj)
 
 	    local scroll = fromObj:FindFirstAncestorWhichIsA("ScrollingFrame")
         if not isVisible(scroll, fromObj) then
-	       task.wait(0.2)
+	       task.wait(0.1)
            scroll.CanvasPosition = Vector2.new(0, fromObj.AbsolutePosition.Y - scroll.AbsolutePosition.Y)
-           task.wait(0.2) -- Ждем дольше, чтобы UI отрисовался
+           task.wait(0.1)
         end
 
 		local fromX = fromObj.AbsolutePosition.X + fromObj.AbsoluteSize.X / 2
@@ -104,9 +104,9 @@ local function dragToObject(fromObj, toObj)
 		task.wait(0.1)
 
 		if not isVisible(scroll, toObj) then
-	       task.wait(0.2)
+	       task.wait(0.1)
            scroll.CanvasPosition = Vector2.new(0, toObj.AbsolutePosition.Y - scroll.AbsolutePosition.Y)
-           task.wait(0.2)
+           task.wait(0.1)
         end
 
 		local toX = toObj.AbsolutePosition.X + toObj.AbsoluteSize.X / 2
