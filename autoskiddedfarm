@@ -112,7 +112,7 @@ local function dragToObject(fromObj, toObj)
 		local toX = toObj.AbsolutePosition.X + toObj.AbsoluteSize.X / 2
 	    local toY = toObj.AbsolutePosition.Y + toObj.AbsoluteSize.Y / 2 + CLICK_OFFSET_Y
 		
-		local steps = 2
+		local steps = 10
 		for i = 1, steps do
 			local t = i / steps
 			local currentX = fromX + (toX - fromX) * t
